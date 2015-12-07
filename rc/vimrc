@@ -5,40 +5,45 @@ set nocompatible
 filetype off
 
 let needsToInstallBundles=0
-if !isdirectory(expand("~/.vim/bundle/vundle"))
+if !isdirectory(expand("~/.vim/bundle/Vundle.vim"))
   echo "\nInstalling Vim dependencies... Please be patient!\n"
   silent !mkdir -p ~/.vim/tmp
   silent !mkdir -p ~/.vim/swap
   silent !mkdir -p ~/.vim/undo
   silent !mkdir -p ~/.vim/bundle
   silent !mkfifo ~/.vim/commands-fifo
-  silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+  silent !git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
   let needsToInstallBundles=1
 endif
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
 " Do these first, because other plugins depend on them
-Bundle 'gmarik/vundle'
-Bundle 'Syntastic'
-Bundle 'tpope/vim-fugitive'
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'Syntastic'
+Plugin 'tpope/vim-fugitive'
 
 " Colorschemes
-Bundle 'wgibbs/vim-irblack'
-Bundle 'vim-scripts/tir_black'
+Plugin 'wgibbs/vim-irblack'
+Plugin 'vim-scripts/tir_black'
 
 " Syntax & Language Support
-Bundle 'hail2u/vim-css3-syntax'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'nono/vim-handlebars'
-Bundle 'othree/html5-syntax.vim'
-Bundle 'slim-template/vim-slim'
-Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-cucumber'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'vim-scripts/VimClojure'
-Bundle 'Keithbsmiley/rspec.vim'
+Plugin 'hail2u/vim-css3-syntax'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'othree/html5-syntax.vim'
+Plugin 'slim-template/vim-slim'
+Plugin 'tpope/vim-markdown'
+Plugin 'tpope/vim-cucumber'
+Plugin 'tpope/vim-haml'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'vim-scripts/VimClojure'
+Plugin 'Keithbsmiley/rspec.vim'
+Plugin 'elixir-lang/vim-elixir'
+
+Plugin 'pangloss/vim-javascript'
+Plugin 'isRuslan/vim-es6'
+Plugin 'mxw/vim-jsx'
 
 " Other
 Bundle 'csexton/trailertrash.vim'
@@ -69,15 +74,19 @@ Bundle 'iain/vim-rspec'
 Bundle 'rizzatti/funcoo.vim'
 Bundle 'rizzatti/dash.vim'
 
+" Always last
 Bundle 'Lokaltog/vim-powerline'
+
+call vundle#end()
+filetype plugin indent on
+
 if needsToInstallBundles == 1
-  echo "\nInstalling Bundles, please ignore key map error messages\n"
-  :BundleInstall!
+  echo "\nInstalling plugins.\n"
+  :PluginInstall
   echo "\nInstalled.\n"
 endif
 
 filetype plugin indent on
-
 
 
 
@@ -100,7 +109,7 @@ end
 
 set vb t_vb=               " Turn off beep
 set lazyredraw             " Don't redraw during macro execution
-set synmaxcol=2048         " Stop syntax highlighting for long lines
+set synmaxcol=512          " Stop syntax highlighting for long lines
 set relativenumber         " Relative line numbering
 set number                 " Relative line numbering
 set nowrap                 " No wrapping by default
@@ -131,29 +140,20 @@ set smartcase
 set hlsearch
 
 let ruby_no_expensive = 1 " Differentiate between do..end and class..end is slow
-let ruby_operators = 1    " Highlight Ruby operators
+let ruby_operators = 0    " Highlight Ruby operators
 
-" Hide DS_store, .git and current and previous directory indicators
-" Use - to go up one dir
-" let g:netrw_list_hide= "\.DS_Store,\.git/,^\\\./,^\\\.\\\./"
-" let g:netrw_banner     = 0
-" let g:netrw_localrmdir='rm -r'
 let g:netrw_nobeval = 1
-" let g:netrw_liststyle=1
 
-if has("balloon_eval")
-  set noballooneval
-endif
+" Those balloon things are annoying as hell
+set noballooneval
+set balloondelay=100000
+setlocal balloonexpr=
 
 let g:ackprg = 'ag --nogroup --nocolor --column'
 
 let g:Powerline_symbols = 'fancy' " Use fancy symbols in vim-powerline
 
 set formatprg=par\ -w80\ -q
-
-if exists(':Americanize')
-  :Americanize
-endif
 
 
 " ==========================
@@ -231,14 +231,6 @@ inoremap <s-tab> <c-n>
 " ":Errors".
 cnoreabbrev E e
 
-" Dragvisuals configuration
-vmap <expr> <LEFT> DVB_Drag('left')
-vmap <expr> <RIGHT> DVB_Drag('right')
-vmap <expr> <DOWN> DVB_Drag('down')
-vmap <expr> <UP> DVB_Drag('up')
-
-vmap <expr> D DVB_Duplicate()
-
 
 " Insert hex keys
 inoremap <silent> <F12> <ESC>:r ! ruby -r securerandom -e "print SecureRandom.hex(32)"<CR>kJ
@@ -255,14 +247,13 @@ map <leader>v :view %%
 map <leader>m :vsplit %%
 map <leader>n :split %%
 
-let g:rspec_command_launcher = "iterm"
-let g:rspec_command_executable = "run_test {spec}"
 
-" Rspec.vim mappings
-map <Leader>t :call RunCurrentSpecFile()<cr>
-map <Leader>T :call RunNearestSpec()<cr>
-map <Leader>l :call RunLastSpec()<cr>
-map <Leader>r :call RunAllSpecs()<cr>
+" Rspec.vim
+let g:rspec_runner = "os_x_iterm"
+map <Leader>t :w<cr>:call RunCurrentSpecFile()<cr>
+map <Leader>T :w<cr>:call RunNearestSpec()<cr>
+map <Leader>l :w<cr>:call RunLastSpec()<cr>
+map <Leader>r :w<cr>:call RunAllSpecs()<cr>
 
 " Custom functions
 " map <leader>p :call PromoteToLet()<cr>
@@ -298,9 +289,6 @@ map <Leader><Leader>u :Git up<cr>
 " Open notes file
 map <Leader>q :split ~/Dropbox/notes.md<cr>
 
-
-
-nmap <silent> <leader>d <Plug>DashSearch
 
 
 " ==========================
@@ -418,3 +406,13 @@ autocmd FileType c,cpp,python,ruby,java,javascript,html
 
 let g:ctrlp_map = '<leader>f'
 let g:ctrlp_cmd = 'CtrlP'
+
+" Syntastic configuration
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_ruby_mri_exec = '~/.rbenv/shims/ruby'
