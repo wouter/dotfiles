@@ -149,3 +149,22 @@ function git {
     #fi
   fi
 }
+
+# Load RVM
+RPROMPT='$(___rvm_prompt)'
+
+if [ -s ~/.rvm/scripts/rvm ]; then
+  source ~/.rvm/scripts/rvm
+  __rvm_project_rvmrc
+fi
+
+function ___rvm_prompt {
+  if [ -s ~/.rvm/bin/rvm-prompt ]; then
+    echo "$gray$(~/.rvm/bin/rvm-prompt)$reset"
+  fi
+}
+
+# rbenv support
+if which rbenv > /dev/null; then
+  eval "$(rbenv init - zsh --no-rehash)";
+fi

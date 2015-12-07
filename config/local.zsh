@@ -9,23 +9,6 @@ export magenta=$'%{\e[0;35m%}'
 export cyan=$'%{\e[0;36m%}'
 export white=$'%{\e[0;37m%}'
 
-# Load RVM
-if [ -s ~/.rvm/scripts/rvm ]; then
-  source ~/.rvm/scripts/rvm
-  __rvm_project_rvmrc
-fi
-
-function ___rvm_prompt {
-  if [ -s ~/.rvm/bin/rvm-prompt ]; then
-    echo "$gray$(~/.rvm/bin/rvm-prompt)$reset"
-  fi
-}
-
-# rbenv support
-if which rbenv > /dev/null; then
-  eval "$(rbenv init - zsh --no-rehash)";
-fi
-
 HISTFILE=~/.histfile
 HISTSIZE=10000
 SAVEHIST=10000
@@ -36,7 +19,6 @@ bindkey -e
 # Set prompt
 setopt prompt_subst
 PROMPT='$(~/.dotfiles/script/prompt $?)'
-RPROMPT='$(___rvm_prompt)'
 
 export SHELL=$(which zsh)
 
