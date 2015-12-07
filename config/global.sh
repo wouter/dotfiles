@@ -138,11 +138,11 @@ function git {
   if [[ -z $(grep "commit" <<< "$args") ]]; then
     /usr/local/bin/git "$@"
   else
-    message=$(echo "$args" | ruby -e 'ARGF.read.split(/\s/).find { |arg| arg =~ /\A-[^-]/ ? arg.include?("m") : arg.include?("--message") } ? exit(1) : exit(0)')
-    if [[ $? == 0 ]]; then
+    # message=$(echo "$args" | ruby -e 'ARGF.read.split(/\s/).find { |arg| arg =~ /\A-[^-]/ ? arg.include?("m") : arg.include?("--message") } ? exit(1) : exit(0)')
+    #if [[ $? == 0 ]]; then
       /usr/local/bin/git "$@"
-    else
-      echo "Don't use -m."
-    fi
+    #else
+    #  echo "Don't use -m."
+    #fi
   fi
 }

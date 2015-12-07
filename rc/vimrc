@@ -58,7 +58,7 @@ Bundle 'tpope/vim-sensible'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-unimpaired'
 Bundle 'tpope/vim-vinegar'
-Bundle 'vim-scripts/bufexplorer.zip'
+" Bundle 'vim-scripts/bufexplorer.zip'
 " Bundle 'eiginn/netrw'
 Bundle 'michaeljsmith/vim-indent-object'
 Bundle 'gavinbeatty/dragvisuals.vim'
@@ -70,7 +70,6 @@ Bundle 'rizzatti/funcoo.vim'
 Bundle 'rizzatti/dash.vim'
 
 Bundle 'Lokaltog/vim-powerline'
-
 if needsToInstallBundles == 1
   echo "\nInstalling Bundles, please ignore key map error messages\n"
   :BundleInstall!
@@ -89,7 +88,7 @@ filetype plugin indent on
 if has("gui_macvim")
   set antialias                      " Pretty
   set guioptions=Ace                 " No menubar, toolbar or scrollbars, as minimal as possible
-  set guifont=Dejavu\ Sans\ Mono:h16 " Get Dejavu Sans mono here: http://dejavu-fonts.org/
+  set guifont=Monaco:h12             " 
   colorscheme ir_black               " Pastel colors
   set fuoptions=maxvert,maxhorz      " Fixes Full Screen on OSX
   " If you are on OSX Lion, and you hate Lion's native full screen, turn it off for macvim:
@@ -206,7 +205,9 @@ nnoremap k gk
 nnoremap <S-k> kJ
 
 " Remap return to clear search highlight
-nnoremap <cr> :nohlsearch<cr>
+" nnoremap <cr> :nohlsearch<cr>
+nnoremap <CR> o<ESC>
+nnoremap <S-CR> O<ESC>
 
 " highlight the 100th character
 highlight ColorColumn ctermbg=magenta
@@ -217,7 +218,7 @@ nnoremap <space> :
 vnoremap <space> :
 
 " Buffer Explorer opens with Ctrl+B
-nnoremap <C-B> :BufExplorer<cr>
+" nnoremap <C-B> :BufExplorer<cr>
 
 " %% will become the directory of the current file
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
@@ -264,7 +265,7 @@ map <Leader>l :call RunLastSpec()<cr>
 map <Leader>r :call RunAllSpecs()<cr>
 
 " Custom functions
-map <leader>p :call PromoteToLet()<cr>
+" map <leader>p :call PromoteToLet()<cr>
 
 " Align = signs
 nmap <Leader>a= :Tabularize /=<cr>
@@ -320,6 +321,7 @@ endfunction
 function! PromoteToLet()
   :normal! dd
   :exec '?^\s*describe\|context\|RSpec\.describe\>'
+
   :normal! p
   :.s/\(\w\+\)\s\+=\s\+\(.*\)$/let(:\1) { \2 }/
   :normal ==
@@ -409,3 +411,10 @@ endfunction
 nmap <Leader>a: :call DoAlignRubyHashes()<cr>
 " In visual mode, the range is already fixed
 vmap <Leader>a: :Tabularize/\(:.*\)\@<!:\zs/l1<cr>gv
+
+" Remove whitespace
+autocmd FileType c,cpp,python,ruby,java,javascript,html
+      \ autocmd BufWritePre <buffer> :%s/\s\+$//e
+
+let g:ctrlp_map = '<leader>f'
+let g:ctrlp_cmd = 'CtrlP'

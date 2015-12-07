@@ -29,3 +29,5 @@ for PARENT_DIR in ${PROJECT_PARENT_DIRS[@]} ; do
     done
   fi
 done
+
+alias bx='bundle exec'
